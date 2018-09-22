@@ -1,10 +1,12 @@
+#important
+credentials
+.phrase_list.txt
+
 #misc
 .DS_Store
 *.swp
 *.zip
 
 #development
-credentials
-phrase_list.txt
 todo
 tests
