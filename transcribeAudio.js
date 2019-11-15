@@ -1,7 +1,6 @@
 'use strict'
 const AWS = require('aws-sdk');
 const Scribe = new AWS.TranscribeService({apiVersion: '2017-10-26'});
-const pt = require('./parseTranscript.js');
 
 exports.transcribe = async event => {
     console.log(JSON.stringify(event));
@@ -25,12 +24,6 @@ exports.transcribe = async event => {
     const getRandomInt = (ceiling) => Math.floor(Math.random() * ceiling);
     const randomizedJobName = transcriptName + '.' + getRandomInt(999999999);
 
-    const vocab_param = {
-        LanguageCode: 'en-US',
-        Phrases: [],
-        VocabularyName: ''
-    }
-
     const scribe_param = {
         LanguageCode: "en-US",
         Media: {
@@ -40,8 +33,7 @@ exports.transcribe = async event => {
         TranscriptionJobName: randomizedJobName,
         OutputBucketName: transcriptBucket,
         Settings: {
-            ShowSpeakerLabels: true,
-            MaxSpeakerLabels: process.env.NUMBER_OF_SPEAKERS,
+            ShowSpeakerLabels: false,
             VocabularyName: process.env.VOCABULARY_NAME
         }
     };
@@ -51,8 +43,10 @@ exports.transcribe = async event => {
     return Scribe.startTranscriptionJob(scribe_param).promise()
         .then(data => {
             console.log(JSON.stringify(data));
+            return data;
         })
         .catch(error => {
             console.log(JSON.stringify(error));
+            return error;
         });
 }

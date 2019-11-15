@@ -1,0 +1,16 @@
+{
+	"TRANSCRIBE_JOB_LIMIT": 200,
+	"S3_BUCKET_NAME": "audio.mpgadv.com",
+	"S3_BUCKET_PREFIXES": [
+		"2010",
+		"2011",
+		"2012",
+		"2013",
+		"2014",
+		"2015",
+		"2016",
+		"2017",
+		"2018",
+		"TMNPR Episodes"
+	]
+}

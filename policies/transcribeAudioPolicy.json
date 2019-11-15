@@ -24,6 +24,11 @@
                 "logs:PutLogEvents"
             ],
             "Resource": "arn:aws:logs:*:*:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": ["lambda:*"],
+            "Resource": "*"
         }
     ]
 }

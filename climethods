@@ -35,7 +35,7 @@ subscribeSnsTopic() {
 
 createTranscribeVocabulary() {
     aws transcribe create-vocabulary \
-        --cli-input-json "{ \"VocabularyName\": \"${VOCABULARY_NAME}\", \"LanguageCode\": \"en-US\", \"Phrases\": [ $(cat phrase_list.txt) ] }"
+        --cli-input-json "{ \"VocabularyName\": \"${VOCABULARY_NAME}\", \"LanguageCode\": \"en-US\", \"Phrases\": $(cat vocabulary.txt) }"
 }
 
 createTranscribeFunction() {
@@ -63,6 +63,20 @@ createExtractFunction() {
         --timeout 30 \
         --memory-size 128 \
         --zip-file "fileb://build/${EXTRACT_LAMBDA_NAME}.zip" \
+        --description "transcribe audio then save and email resulting transcription."
+}
+
+createTranscribeBucketFunction() {
+    zip "build/${TRANSCRIBE_BUCKET_LAMBDA_NAME}.zip" "${TRANSCRIBE_BUCKET_LAMBDA_NAME}.js"
+    aws lambda create-function \
+        --function-name "${TRANSCRIBE_BUCKET_LAMBDA_NAME}" \
+        --runtime "nodejs8.10" \
+        --role "${TRANSCRIBE_ROLE_ARN}" \
+        --environment "Variables={TRANSCRIPT_DESTINATION_EMAIL=${TRANSCRIPT_DESTINATION_EMAIL},TRANSCRIPT_DESTINATION_S3BUCKET_NAME=${TRANSCRIPT_DESTINATION_S3BUCKET_NAME},NUMBER_OF_SPEAKERS=${NUMBER_OF_SPEAKERS},VOCABULARY_NAME=${VOCABULARY_NAME},AUDIO_SOURCE_S3BUCKET_NAME=${AUDIO_SOURCE_S3BUCKET_NAME}}" \
+        --handler "transcribeBucket.transcribe" \
+        --timeout 30 \
+        --memory-size 128 \
+        --zip-file "fileb://build/${TRANSCRIBE_BUCKET_LAMBDA_NAME}.zip" \
         --description "transcribe audio then save and email resulting transcription."
 }
 
@@ -109,6 +123,11 @@ deleteExtractFunction() {
         --function-name "${EXTRACT_LAMBDA_ARN}"
 }
 
+deleteTranscribeBucketFunction() {
+	aws lambda delete-function \
+        --function-name "${TRANSCRIBE_BUCKET_LAMBDA_NAME}"
+}
+
 deleteTranscribeVocabulary() {
     aws transcribe delete-vocabulary \
         --vocabulary-name "scribevocabulary"
@@ -150,9 +169,16 @@ updateExtractFunction() {
         --zip-file "fileb://build/${EXTRACT_LAMBDA_NAME}.zip"
 }
 
+updateTranscribeBucketFunction() {
+    zip "build/${TRANSCRIBE_BUCKET_LAMBDA_NAME}.zip" "${TRANSCRIBE_BUCKET_LAMBDA_NAME}.js"
+	aws lambda update-function-code \
+        --function-name "${TRANSCRIBE_BUCKET_LAMBDA_NAME}" \
+        --zip-file "fileb://build/${TRANSCRIBE_BUCKET_LAMBDA_NAME}.zip"
+}
+
 updateTranscribeVocabulary() {
     aws transcribe update-vocabulary \
-        --cli-input-json "{ \"VocabularyName\": \"${VOCABULARY_NAME}\", \"LanguageCode\": \"en-US\", \"Phrases\": [ $(cat phrase_list.txt) ] }"
+        --cli-input-json "{ \"VocabularyName\": \"${VOCABULARY_NAME}\", \"LanguageCode\": \"en-US\", \"Phrases\": $(cat vocabulary.txt) }"
 }
 
 listAllTranscriptionJobs() {

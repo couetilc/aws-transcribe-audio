@@ -2,7 +2,6 @@
 const AWS = require('aws-sdk');
 const S3 = new AWS.S3();
 const SNS = new AWS.SNS({apiVersion: '2010-12-01'});
-const pt = require('./parseTranscript.js');
 
 exports.parseJSON = function (event) {
     console.log(JSON.stringify(event));
@@ -37,13 +36,9 @@ exports.parseJSON = function (event) {
     }).promise()
     .then(response => {
         const report = JSON.parse(response.Body.toString());
-
-        //Speller represents a spelling correction function.
-        const speller = word => word;
-        const transcript = pt.parseTranscriptJson(report, speller);
-        const printout = pt.stringifyTranscriptObject(transcript);
-
-        //const transcript = report.results.transcripts[0].transcript;
+        const leading_space = / \?/gi;
+        const transcript = report.results.transcripts[0].transcript
+            .replace(leading_space, '?');
         const email = `Transcript for ${processed_file}
 
 Processed on: ${processed_on}
@@ -52,7 +47,7 @@ Link to bucket: ${destination_bucket_url}
 Path to JSON: ${filepath}
 Path to text: ${destination_filepath}
 
-${printout}`;
+${transcript}`;
 
         S3.putObject({
             Body: email,

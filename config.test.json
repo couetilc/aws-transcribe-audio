@@ -1,0 +1,7 @@
+{
+	"S3_BUCKET_NAME": "audio.mpgadv.com",
+	"S3_BUCKET_PREFIXES": [
+		"2018/",
+		"2017/"
+	]
+}

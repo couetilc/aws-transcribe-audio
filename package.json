@@ -1,0 +1,26 @@
+{
+  "name": "aws-transcribe-audio",
+  "version": "1.0.0",
+  "description": "Automatically transcribe audio files added to an AWS S3 bucket and receive notification emails when the transcriptions are complete.",
+  "main": "queueBucketTranscripts.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.353.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/couetilc/aws-transcribe-audio.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/couetilc/aws-transcribe-audio/issues"
+  },
+  "homepage": "https://github.com/couetilc/aws-transcribe-audio#readme"
+}
